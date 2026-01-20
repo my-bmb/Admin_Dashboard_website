@@ -1,0 +1,230 @@
+/* Admin Dashboard Styles */
+
+:root {
+    --primary-color: #667eea;
+    --secondary-color: #764ba2;
+    --success-color: #48bb78;
+    --danger-color: #f56565;
+    --warning-color: #ed8936;
+    --info-color: #38b2ac;
+    --light-color: #f7fafc;
+    --dark-color: #2d3748;
+}
+
+/* Sidebar */
+.offcanvas-start {
+    background: linear-gradient(180deg, var(--dark-color) 0%, #1a202c 100%);
+}
+
+.nav-link {
+    border-radius: 8px;
+    margin-bottom: 4px;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white !important;
+}
+
+/* Cards */
+.card {
+    border: none;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    margin-bottom: 1.5rem;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid #e3e6f0;
+    padding: 1rem 1.5rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Stats Cards */
+.border-left-primary {
+    border-left: 0.25rem solid var(--primary-color) !important;
+}
+
+.border-left-success {
+    border-left: 0.25rem solid var(--success-color) !important;
+}
+
+.border-left-info {
+    border-left: 0.25rem solid var(--info-color) !important;
+}
+
+.border-left-warning {
+    border-left: 0.25rem solid var(--warning-color) !important;
+}
+
+/* Tables */
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: var(--dark-color);
+    background-color: #f8f9fc;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9fc;
+}
+
+/* Badges */
+.badge {
+    padding: 0.35em 0.65em;
+    font-weight: 500;
+}
+
+/* Progress Bars */
+.progress {
+    height: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+/* Buttons */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6b4399 100%);
+}
+
+/* Charts */
+.chart-container {
+    position: relative;
+    height: 250px;
+    width: 100%;
+}
+
+/* Alerts */
+.alert {
+    border: none;
+    border-radius: 8px;
+}
+
+/* Forms */
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+}
+
+/* Navigation */
+.navbar {
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+}
+
+/* Main Content */
+main {
+    padding-top: 70px;
+    min-height: calc(100vh - 70px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Status Colors */
+.status-pending { color: var(--primary-color); }
+.status-processing { color: var(--warning-color); }
+.status-confirmed { color: var(--info-color); }
+.status-delivered { color: var(--success-color); }
+.status-cancelled { color: var(--danger-color); }
+
+/* Avatar */
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Loading Spinner */
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+}
+
+/* Dark Mode Support */
+[data-bs-theme="dark"] {
+    --light-color: #2d3748;
+    --dark-color: #f7fafc;
+}
+
+[data-bs-theme="dark"] .card {
+    background-color: #2d3748;
+    color: #e2e8f0;
+}
+
+[data-bs-theme="dark"] .card-header {
+    background-color: #2d3748;
+    border-bottom-color: #4a5568;
+}
+
+[data-bs-theme="dark"] .table {
+    color: #e2e8f0;
+}
+
+[data-bs-theme="dark"] .table th {
+    background-color: #4a5568;
+    color: #e2e8f0;
+}
+
+[data-bs-theme="dark"] .table-hover tbody tr:hover {
+    background-color: #4a5568;
+}
+
+[data-bs-theme="dark"] .form-control {
+    background-color: #4a5568;
+    border-color: #718096;
+    color: #e2e8f0;
+}
+
+[data-bs-theme="dark"] .form-control:focus {
+    background-color: #4a5568;
+    color: #e2e8f0;
+}

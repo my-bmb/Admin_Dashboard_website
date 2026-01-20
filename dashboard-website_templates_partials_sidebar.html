@@ -1,0 +1,124 @@
+<div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="sidebar" style="width: 280px;">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">
+            <i class="bi bi-shop me-2"></i>
+            Admin Panel
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    
+    <div class="offcanvas-body p-0">
+        <!-- User Info -->
+        <div class="p-3 border-bottom border-secondary">
+            <div class="d-flex align-items-center">
+                <div class="flex-shrink-0">
+                    <i class="bi bi-person-circle fs-1"></i>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h6 class="mb-1">{{ admin_name }}</h6>
+                    <small class="text-muted">{{ admin_role|title }}</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <nav class="nav flex-column p-3">
+            <div class="mb-3">
+                <small class="text-uppercase text-muted">Dashboard</small>
+            </div>
+            <a class="nav-link text-white mb-2 {{ 'active bg-primary' if request.endpoint == 'dashboard' }}" href="{{ url_for('dashboard') }}">
+                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+            </a>
+            
+            <div class="mb-3 mt-4">
+                <small class="text-uppercase text-muted">Management</small>
+            </div>
+            
+            <a class="nav-link text-white mb-2 {{ 'active bg-primary' if request.endpoint == 'orders_list' or request.endpoint == 'order_detail' }}" href="{{ url_for('orders_list') }}">
+                <i class="bi bi-cart-check me-2"></i> Orders
+                <span class="badge bg-danger float-end">{{ total_orders if total_orders is defined else 0 }}</span>
+            </a>
+            
+            <a class="nav-link text-white mb-2 {{ 'active bg-primary' if request.endpoint == 'users_list' or request.endpoint == 'user_detail' }}" href="{{ url_for('users_list') }}">
+                <i class="bi bi-people me-2"></i> Users
+            </a>
+            
+            <a class="nav-link text-white mb-2 {{ 'active bg-primary' if request.endpoint == 'services_list' or request.endpoint == 'add_service' or request.endpoint == 'edit_service' }}" href="{{ url_for('services_list') }}">
+                <i class="bi bi-tools me-2"></i> Services
+            </a>
+            
+            <a class="nav-link text-white mb-2 {{ 'active bg-primary' if request.endpoint == 'menu_list' }}" href="{{ url_for('menu_list') }}">
+                <i class="bi bi-cup-straw me-2"></i> Menu Items
+            </a>
+            
+            <a class="nav-link text-white mb-2 {{ 'active bg-primary' if request.endpoint == 'payments_list' }}" href="{{ url_for('payments_list') }}">
+                <i class="bi bi-credit-card me-2"></i> Payments
+            </a>
+            
+            <a class="nav-link text-white mb-2 {{ 'active bg-primary' if request.endpoint == 'addresses_list' }}" href="{{ url_for('addresses_list') }}">
+                <i class="bi bi-geo-alt me-2"></i> Addresses
+            </a>
+            
+            <a class="nav-link text-white mb-2 {{ 'active bg-primary' if request.endpoint == 'reviews_list' }}" href="{{ url_for('reviews_list') }}">
+                <i class="bi bi-star me-2"></i> Reviews
+            </a>
+            
+            <div class="mb-3 mt-4">
+                <small class="text-uppercase text-muted">Analytics</small>
+            </div>
+            
+            <a class="nav-link text-white mb-2" href="#" data-bs-toggle="collapse" data-bs-target="#analyticsSubmenu">
+                <i class="bi bi-graph-up me-2"></i> Reports
+                <i class="bi bi-chevron-down float-end"></i>
+            </a>
+            
+            <div class="collapse" id="analyticsSubmenu">
+                <div class="nav flex-column ps-4">
+                    <a class="nav-link text-white mb-1" href="#">
+                        <i class="bi bi-bar-chart me-2"></i> Sales Report
+                    </a>
+                    <a class="nav-link text-white mb-1" href="#">
+                        <i class="bi bi-person-lines-fill me-2"></i> Customer Report
+                    </a>
+                    <a class="nav-link text-white mb-1" href="#">
+                        <i class="bi bi-calendar-check me-2"></i> Daily Report
+                    </a>
+                </div>
+            </div>
+            
+            <div class="mb-3 mt-4">
+                <small class="text-uppercase text-muted">System</small>
+            </div>
+            
+            <a class="nav-link text-white mb-2 {{ 'active bg-primary' if request.endpoint == 'admin_notifications' }}" href="{{ url_for('admin_notifications') }}">
+                <i class="bi bi-bell me-2"></i> Notifications
+            </a>
+            
+            <a class="nav-link text-white mb-2 {{ 'active bg-primary' if request.endpoint == 'admin_profile' }}" href="{{ url_for('admin_profile') }}">
+                <i class="bi bi-gear me-2"></i> Settings
+            </a>
+            
+            <a class="nav-link text-white mb-2" href="/health" target="_blank">
+                <i class="bi bi-heart-pulse me-2"></i> Health Check
+            </a>
+            
+            <hr class="bg-secondary my-3">
+            
+            <a class="nav-link text-danger" href="{{ url_for('admin_logout') }}">
+                <i class="bi bi-box-arrow-right me-2"></i> Logout
+            </a>
+        </nav>
+        
+        <!-- System Status -->
+        <div class="p-3 border-top border-secondary mt-auto">
+            <small class="d-block text-muted">
+                <i class="bi bi-clock me-1"></i>
+                {{ ist_now().strftime('%d %b %Y, %I:%M %p') }}
+            </small>
+            <small class="d-block text-success mt-1">
+                <i class="bi bi-circle-fill me-1"></i>
+                System: Online
+            </small>
+        </div>
+    </div>
+</div>

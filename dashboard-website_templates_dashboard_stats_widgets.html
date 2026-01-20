@@ -1,0 +1,105 @@
+<div class="row">
+    <!-- Total Orders -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total Orders
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800 stat-value" data-stat="orders">
+                            {{ total_orders }}
+                        </div>
+                        <div class="mt-2 mb-0 text-muted text-xs">
+                            <span class="text-success mr-2">
+                                <i class="bi bi-arrow-up"></i> Today: {{ today_orders }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-cart-check fa-2x text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Revenue -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Total Revenue
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800 stat-value" data-stat="revenue">
+                            ₹{{ "%.2f"|format(total_revenue) }}
+                        </div>
+                        <div class="mt-2 mb-0 text-muted text-xs">
+                            <span class="text-success mr-2">
+                                <i class="bi bi-currency-rupee"></i> Today: ₹{{ "%.2f"|format(today_revenue) }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-currency-rupee fa-2x text-success"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Average Order Value -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Avg. Order Value
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800 stat-value" data-stat="avg-order">
+                            ₹{{ "%.2f"|format(total_revenue/total_orders if total_orders > 0 else 0) }}
+                        </div>
+                        <div class="mt-2 mb-0 text-muted text-xs">
+                            <span>
+                                <i class="bi bi-graph-up"></i> {{ "%.1f"|format((today_revenue/today_orders if today_orders > 0 else 0)) }} today
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-graph-up fa-2x text-info"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Status -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            System Status
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            <span class="badge bg-success">Live</span>
+                        </div>
+                        <div class="mt-2 mb-0 text-muted text-xs">
+                            <span>
+                                <i class="bi bi-clock"></i> <span id="currentTime"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-server fa-2x text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

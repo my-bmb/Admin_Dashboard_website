@@ -1,0 +1,398 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Dashboard - BiteMeBuddy Admin{% endblock %}
+
+{% block page_title %}
+<div class="d-flex align-items-center">
+    <i class="bi bi-speedometer2 me-2"></i>
+    Dashboard
+    <span class="badge bg-primary ms-2">Live</span>
+</div>
+{% endblock %}
+
+{% block page_actions %}
+<div class="btn-group me-2">
+    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="refreshDashboard()">
+        <i class="bi bi-arrow-clockwise"></i> Refresh
+    </button>
+</div>
+<div class="dropdown">
+    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        <i class="bi bi-calendar"></i> Today
+    </button>
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="#" onclick="changePeriod('today')">Today</a></li>
+        <li><a class="dropdown-item" href="#" onclick="changePeriod('week')">This Week</a></li>
+        <li><a class="dropdown-item" href="#" onclick="changePeriod('month')">This Month</a></li>
+        <li><a class="dropdown-item" href="#" onclick="changePeriod('year')">This Year</a></li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Stats Widgets -->
+{% include 'dashboard/stats_widgets.html' %}
+
+<div class="row mt-4">
+    <!-- Charts Section -->
+    <div class="col-lg-8">
+        <!-- Revenue Chart -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-graph-up"></i> Revenue Analytics</h5>
+                    <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-primary active" onclick="changeChartType('daily')">Daily</button>
+                        <button type="button" class="btn btn-outline-primary" onclick="changeChartType('weekly')">Weekly</button>
+                        <button type="button" class="btn btn-outline-primary" onclick="changeChartType('monthly')">Monthly</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="revenueChart" height="250"></canvas>
+            </div>
+        </div>
+        
+        <!-- Real-time Charts -->
+        {% include 'dashboard/realtime_charts.html' %}
+    </div>
+    
+    <!-- Recent Orders & Quick Stats -->
+    <div class="col-lg-4">
+        <!-- Quick Stats -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-lightning"></i> Quick Stats</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6 mb-3">
+                        <div class="stat-box p-3 rounded" style="background-color: #e3f2fd;">
+                            <h3 class="text-primary">{{ active_users }}</h3>
+                            <small class="text-muted">Active Users</small>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="stat-box p-3 rounded" style="background-color: #e8f5e9;">
+                            <h3 class="text-success">{{ pending_payments }}</h3>
+                            <small class="text-muted">Pending Payments</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Status Distribution -->
+                <h6 class="mt-3 mb-2">Order Status</h6>
+                <div class="progress-stacked mb-2">
+                    {% for status, count in status_counts.items() %}
+                    <div class="progress" role="progressbar" style="width: {{ (count/total_orders*100) if total_orders > 0 else 0 }}%">
+                        <div class="progress-bar bg-{{ 
+                            'primary' if status == 'pending' 
+                            else 'warning' if status == 'processing' 
+                            else 'info' if status == 'confirmed' 
+                            else 'success' if status == 'delivered' 
+                            else 'danger' if status == 'cancelled' 
+                            else 'secondary' 
+                        }}" title="{{ status|title }}: {{ count }}"></div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="d-flex flex-wrap">
+                    {% for status, count in status_counts.items() %}
+                    <span class="badge bg-{{ 
+                        'primary' if status == 'pending' 
+                        else 'warning' if status == 'processing' 
+                        else 'info' if status == 'confirmed' 
+                        else 'success' if status == 'delivered' 
+                        else 'danger' if status == 'cancelled' 
+                        else 'secondary' 
+                    }} me-2 mb-1">{{ status|title }}: {{ count }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Latest Orders -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Orders</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for order in latest_orders %}
+                    <a href="{{ url_for('order_detail', order_id=order.order_id) }}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">#{{ order.order_id }}</h6>
+                            <small class="text-{{ 
+                                'primary' if order.status == 'pending' 
+                                else 'warning' if order.status == 'processing' 
+                                else 'info' if order.status == 'confirmed' 
+                                else 'success' if order.status == 'delivered' 
+                                else 'danger' if order.status == 'cancelled' 
+                                else 'secondary' 
+                            }}">{{ order.status|title }}</small>
+                        </div>
+                        <p class="mb-1">{{ order.user_name }}</p>
+                        <small class="text-muted">
+                            <i class="bi bi-clock"></i> {{ order.order_date_formatted }}<br>
+                            <i class="bi bi-cash"></i> ₹{{ "%.2f"|format(order.total_amount) }}
+                        </small>
+                    </a>
+                    {% else %}
+                    <div class="list-group-item text-center text-muted py-4">
+                        <i class="bi bi-inbox display-6"></i>
+                        <p class="mt-2">No recent orders</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <a href="{{ url_for('orders_list') }}" class="btn btn-sm btn-outline-primary">
+                    View All Orders <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top Selling Items -->
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-star"></i> Top Services</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Sales</th>
+                                <th>Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for service in top_services %}
+                            <tr>
+                                <td>{{ service.name }}</td>
+                                <td>{{ service.sales_count }}</td>
+                                <td>₹{{ "%.2f"|format(service.total_revenue) }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted py-3">No services data available</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-cup-straw"></i> Top Menu Items</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Sales</th>
+                                <th>Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in top_menu %}
+                            <tr>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.sales_count }}</td>
+                                <td>₹{{ "%.2f"|format(item.total_revenue) }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted py-3">No menu data available</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize Revenue Chart
+    let revenueChart;
+    
+    function initRevenueChart() {
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        
+        revenueChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ chart_labels|tojson }},
+                datasets: [{
+                    label: 'Revenue (₹)',
+                    data: {{ chart_revenue|tojson }},
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Orders',
+                    data: {{ chart_orders|tojson }},
+                    borderColor: '#f56565',
+                    backgroundColor: 'rgba(245, 101, 101, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₹' + value;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Initialize Monthly Chart
+    let monthlyChart;
+    
+    function initMonthlyChart() {
+        const ctx = document.getElementById('monthlyChart')?.getContext('2d');
+        if (!ctx) return;
+        
+        monthlyChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ monthly_labels|tojson }},
+                datasets: [{
+                    label: 'Monthly Revenue (₹)',
+                    data: {{ monthly_revenue|tojson }},
+                    backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                    borderColor: '#667eea',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₹' + value;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Dashboard Functions
+    function refreshDashboard() {
+        window.location.reload();
+    }
+    
+    function changePeriod(period) {
+        // Implement period change logic
+        console.log('Changing period to:', period);
+    }
+    
+    function changeChartType(type) {
+        // Update active button
+        document.querySelectorAll('#revenueChart').parentElement.parentElement.querySelectorAll('.btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        
+        // Fetch chart data for selected type
+        fetch(`/api/dashboard/chart/revenue?type=${type}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    revenueChart.data.labels = data.labels;
+                    revenueChart.data.datasets[0].data = data.datasets.revenue;
+                    revenueChart.data.datasets[1].data = data.datasets.orders;
+                    revenueChart.update();
+                }
+            });
+    }
+    
+    // Auto-refresh dashboard every 60 seconds
+    let refreshInterval = setInterval(() => {
+        fetch('/api/dashboard/stats?period=today')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update stats dynamically
+                    document.querySelectorAll('.stat-value').forEach(el => {
+                        const statType = el.dataset.stat;
+                        if (statType === 'orders') {
+                            el.textContent = data.stats.order_count;
+                        } else if (statType === 'revenue') {
+                            el.textContent = '₹' + data.stats.revenue.toLocaleString('en-IN');
+                        } else if (statType === 'avg-order') {
+                            el.textContent = '₹' + data.stats.avg_order_value.toFixed(2);
+                        } else if (statType === 'customers') {
+                            el.textContent = data.stats.new_customers;
+                        }
+                    });
+                }
+            });
+    }, 60000);
+    
+    // Initialize charts when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        initRevenueChart();
+        initMonthlyChart();
+        
+        // Set current time
+        function updateCurrentTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = 
+                now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        }
+        
+        updateCurrentTime();
+        setInterval(updateCurrentTime, 1000);
+    });
+    
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', function() {
+        clearInterval(refreshInterval);
+    });
+</script>
+{% endblock %}

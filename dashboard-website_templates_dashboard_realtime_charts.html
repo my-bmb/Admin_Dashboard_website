@@ -1,0 +1,72 @@
+<div class="row">
+    <!-- Monthly Revenue Chart -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-calendar-month"></i> Monthly Revenue</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="monthlyChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Order Status Distribution -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Order Status Distribution</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="statusChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize Status Distribution Chart
+    document.addEventListener('DOMContentLoaded', function() {
+        const statusCtx = document.getElementById('statusChart').getContext('2d');
+        
+        // Prepare data for status chart
+        const statusLabels = [];
+        const statusData = [];
+        const statusColors = [];
+        
+        {% for status, count in status_counts.items() %}
+        statusLabels.push('{{ status|title }}');
+        statusData.push({{ count }});
+        statusColors.push(
+            '{{ 
+                "#667eea" if status == "pending" 
+                else "#ed8936" if status == "processing" 
+                else "#38b2ac" if status == "confirmed" 
+                else "#48bb78" if status == "delivered" 
+                else "#f56565" if status == "cancelled" 
+                else "#a0aec0" 
+            }}'
+        );
+        {% endfor %}
+        
+        new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: statusLabels,
+                datasets: [{
+                    data: statusData,
+                    backgroundColor: statusColors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    }
+                }
+            }
+        });
+    });
+</script>
